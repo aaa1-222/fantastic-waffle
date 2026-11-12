@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>AI 省下的时间，最后去哪了？</title>
+<meta name="description" content="一个关于 AI 提效后时间去向的趣味测试：你更偏娱乐回流，还是任务增殖？">
+<style>
+:root{
+  --bg:#f6f7ff;
+  --card:#ffffff;
+  --ink:#182033;
+  --muted:#788198;
+  --line:#e8ebf5;
+  --brand:#3b55ff;
+  --brand2:#7b5cff;
+  --soft:#eef1ff;
+  --warm:#ffb34d;
+  --shadow:0 24px 70px rgba(37,52,130,.13);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:var(--ink);background:
+radial-gradient(circle at 12% 0%,rgba(82,103,255,.16),transparent 28%),
+radial-gradient(circle at 100% 20%,rgba(129,87,255,.12),transparent 25%),var(--bg)}
+body{display:flex;justify-content:center}
+.app{width:min(100%,760px);min-height:100vh;padding:18px 16px 42px;display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;justify-content:space-between;font-size:13px;color:var(--muted);padding:4px 2px 12px}
+.brand b{color:#3347c9;letter-spacing:.08em}
+.shell{flex:1;display:flex;align-items:center;justify-content:center}
+.screen{width:100%;display:none}
+.screen.active{display:block;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.hero{
+  background:linear-gradient(145deg,#2f49ec 0%,#4159ff 48%,#7249e7 100%);
+  border-radius:30px;color:#fff;padding:34px 28px;box-shadow:var(--shadow);position:relative;overflow:hidden
+}
+.hero:before,.hero:after{content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.08)}
+.hero:before{width:260px;height:260px;right:-100px;top:-100px}
+.hero:after{width:340px;height:340px;left:-170px;bottom:-220px}
+.kicker{font-size:12px;letter-spacing:.14em;opacity:.8}
+h1{font-size:clamp(34px,8vw,60px);line-height:1.08;margin:10px 0 14px;letter-spacing:-.03em}
+.hero p{margin:0;font-size:16px;line-height:1.75;opacity:.92;max-width:590px}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 0}
+.pill{padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.14);font-size:12px}
+.primary{width:100%;margin-top:20px;border:0;border-radius:16px;padding:16px 18px;background:#fff;color:#2e43ce;font-weight:850;font-size:16px;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.10)}
+.primary:active{transform:scale(.99)}
+.note{font-size:12px;opacity:.72;margin-top:13px;text-align:center}
+.quiz-card,.result-card{
+  background:#fff;border:1px solid var(--line);border-radius:28px;padding:24px;box-shadow:var(--shadow)
+}
+.toprow{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px}
+.progress{height:8px;background:#edf0fb;border-radius:999px;overflow:hidden;flex:1}
+.progress > div{height:100%;width:0;background:linear-gradient(90deg,var(--brand),var(--brand2));transition:width .3s ease;border-radius:999px}
+.counter{font-size:12px;color:var(--muted);min-width:52px;text-align:right}
+.scene{font-size:13px;color:#4c5cc7;font-weight:800;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+.question{font-size:clamp(23px,5vw,32px);font-weight:900;line-height:1.35;margin:0 0 22px;letter-spacing:-.02em}
+.choices{display:grid;gap:14px}
+.choice{
+  border:1px solid var(--line);background:#fff;border-radius:18px;padding:17px 18px;text-align:left;cursor:pointer;
+  transition:.18s ease;box-shadow:0 4px 14px rgba(32,43,91,.035);font-size:16px;line-height:1.65;color:var(--ink)
+}
+.choice:hover{border-color:#aeb9ff;background:#fafbff;transform:translateY(-2px)}
+.choice:active{transform:scale(.995)}
+.choice .emoji{font-size:22px;margin-right:8px;vertical-align:-2px}
+.choice.selected{border-color:#677dff;background:#f2f4ff;box-shadow:0 0 0 3px rgba(59,85,255,.08)}
+.minihint{text-align:center;color:var(--muted);font-size:12px;margin-top:16px}
+.result-head{
+  border-radius:22px;padding:24px;background:linear-gradient(145deg,#304be6,#4c62ff 55%,#754ce4);color:#fff
+}
+.result-tag{font-size:12px;letter-spacing:.13em;opacity:.78}
+.result-title{font-size:clamp(29px,7vw,48px);font-weight:950;line-height:1.15;margin:8px 0}
+.result-sub{opacity:.92;line-height:1.7}
+.scorebar{margin-top:22px}
+.labels,.nums{display:flex;justify-content:space-between;gap:8px;font-size:12px}
+.track{height:16px;background:rgba(255,255,255,.20);border-radius:999px;overflow:hidden;margin:7px 0}
+.fill{height:100%;width:50%;background:#fff;border-radius:999px;transition:width .8s cubic-bezier(.2,.7,.2,1)}
+.nums{font-size:14px;font-weight:850}
+.analysis{padding:22px 4px 0}
+.analysis h3{font-size:16px;margin:0 0 10px}
+.analysis p{color:#4f586e;line-height:1.8;margin:0}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.tag{font-size:12px;background:var(--soft);color:#3d4db7;padding:7px 10px;border-radius:999px}
+.quote{margin-top:18px;padding:16px 17px;border-radius:16px;background:#fff8ea;border:1px solid #ffe2a9;color:#695126;line-height:1.7}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.secondary{border:1px solid var(--line);background:#fff;border-radius:14px;padding:13px 14px;cursor:pointer;font-weight:800;color:var(--ink)}
+.footer{text-align:center;color:var(--muted);font-size:11px;margin-top:18px;line-height:1.6}
+@media(max-width:560px){
+  .app{padding:12px 12px 30px}
+  .hero,.quiz-card,.result-card{border-radius:22px}
+  .hero{padding:28px 20px}
+  .quiz-card,.result-card{padding:18px}
+  .actions{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="brand"><b>AI × TIME LAB</b><span>娱乐回流 / 任务增殖</span></div>
+
+  <div class="shell">
+    <section id="start" class="screen active">
+      <div class="hero">
+        <div class="kicker">12 SCENES · 1 RESULT</div>
+        <h1>AI 省下的时间，<br>最后去哪了？</h1>
+        <p>不是问卷，也没有标准答案。连续做 12 个生活情境选择，看看你更像「把效率换成快乐的人」，还是「把效率继续塞回任务里的人」。</p>
+        <div class="meta">
+          <span class="pill">🎮 情境选择</span>
+          <span class="pill">⏱ 约 2 分钟</span>
+          <span class="pill">🧠 不问“你自不自律”</span>
+        </div>
+        <button id="startBtn" class="primary">开始测试 →</button>
+        <div class="note">结果仅作趣味观察，不是心理学诊断。</div>
+      </div>
+    </section>
+
+    <section id="quiz" class="screen">
+      <div class="quiz-card">
+        <div class="toprow">
+          <div class="progress"><div id="progressFill"></div></div>
+          <div id="counter" class="counter">1 / 12</div>
+        </div>
+        <div id="scene" class="scene">SCENE 01</div>
+        <h2 id="question" class="question"></h2>
+        <div id="choices" class="choices"></div>
+        <div class="minihint">选最接近你真实第一反应的那个。</div>
+      </div>
+    </section>
+
+    <section id="result" class="screen">
+      <div class="result-card">
+        <div class="result-head">
+          <div class="result-tag">YOUR AI × TIME TYPE</div>
+          <div id="resultTitle" class="result-title"></div>
+          <div id="resultSub" class="result-sub"></div>
+
+          <div class="scorebar">
+            <div class="labels"><span>A · 娱乐回流</span><span>B · 任务增殖</span></div>
+            <div class="track"><div id="resultFill" class="fill"></div></div>
+            <div class="nums"><span id="aNum"></span><span id="bNum"></span></div>
+          </div>
+        </div>
+
+        <div class="analysis">
+          <h3>你的时间使用模式</h3>
+          <p id="analysisText"></p>
+          <div id="tags" class="tags"></div>
+          <div id="quote" class="quote"></div>
+          <div class="actions">
+            <button id="copyBtn" class="secondary">复制结果</button>
+            <button id="restartBtn" class="secondary">再测一次</button>
+          </div>
+          <div class="footer">这个测试关注的是“AI 提效后的时间去向”，不是勤奋程度，也不区分谁更好。</div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    scene:"突然多出一小时",
+    q:"老师临时把截止时间延后，而你原本已经快做完了。你更可能？",
+    choices:[
+      {t:"🎧 先把电脑合上，去吃点东西、刷会儿视频或者出去走走。", s:-2, tag:"会把空闲还给自己"},
+      {t:"📝 既然还有时间，那就顺手把格式、措辞和细节再提升一轮。", s:2, tag:"容易继续精修"}
+    ]
+  },
+  {
+    scene:"AI 秒出初稿",
+    q:"你用 AI 十分钟做出了原本可能要一小时的初稿。下一步你会？",
+    choices:[
+      {t:"🎮 先去做点完全无关的事，晚点再回来检查。", s:-2, tag:"倾向先兑现奖励"},
+      {t:"🔍 立刻继续查资料、补论据、改结构，把节省的时间全投回去。", s:2, tag:"效率会再投资"}
+    ]
+  },
+  {
+    scene:"周末空档",
+    q:"周六下午突然没有任何必须完成的安排，你最自然的状态是？",
+    choices:[
+      {t:"🛋️ 太好了，终于可以什么都不推进，随便玩点想玩的。", s:-2, tag:"享受无任务时间"},
+      {t:"📌 会下意识想：是不是可以顺便把下周的事情先做一点？", s:2, tag:"空档会被任务占据"}
+    ]
+  },
+  {
+    scene:"完成得比别人快",
+    q:"小组里你借助 AI 最先做完自己的部分，这时你更可能？",
+    choices:[
+      {t:"☕ 我的部分结束了，先休息，等大家需要时再帮忙。", s:-1.5, tag:"边界感较强"},
+      {t:"🧩 既然我快，就再帮忙补几页、整理材料或者接下一项。", s:2, tag:"容易承接额外任务"}
+    ]
+  },
+  {
+    scene:"结果已经能交",
+    q:"一个作业已经达到“能交而且不会差”的程度，但你还剩半小时。你会？",
+    choices:[
+      {t:"📱 到这里就够了，剩下半小时属于我。", s:-2, tag:"接受够用主义"},
+      {t:"✨ 还有半小时？那就再把版式、标题和表达打磨一下。", s:2, tag:"追求更高完成度"}
+    ]
+  },
+  {
+    scene:"吃饭时间",
+    q:"你一个人吃饭时，更接近哪种状态？",
+    choices:[
+      {t:"🍜 找点轻松的视频或音乐，彻底切出任务状态。", s:-1.5, tag:"会主动切换模式"},
+      {t:"💬 顺便回消息、看群通知、处理待办，感觉这样比较不浪费时间。", s:1.5, tag:"碎片时间任务化"}
+    ]
+  },
+  {
+    scene:"今天提前收工",
+    q:"你预计晚上十点才能完成的事，AI 帮你七点就搞定了。你第一反应是？",
+    choices:[
+      {t:"🌙 今天赚到了三个小时，干点自己想干的。", s:-2, tag:"把提效理解为自由"},
+      {t:"📚 那正好把明天的也提前做了，之后会更轻松。", s:2, tag:"会提前透支任务"}
+    ]
+  },
+  {
+    scene:"收到一个新机会",
+    q:"你最近因为 AI 提效确实空出了一些时间，这时又来了一个新项目邀请。你会？",
+    choices:[
+      {t:"🙅 先看自己最近想不想做，不会因为‘有空’就默认接。", s:-1.5, tag:"不自动扩张任务量"},
+      {t:"🚀 既然现在效率高了，可以接，反正应该能做得过来。", s:2, tag:"产能提升后扩张任务"}
+    ]
+  },
+  {
+    scene:"没有 DDL 的晚上",
+    q:"今晚既没有作业截止，也没人催你。你更容易出现哪种感觉？",
+    choices:[
+      {t:"😌 很舒服，终于不用证明今晚‘有产出’。", s:-2, tag:"对闲暇更自在"},
+      {t:"🌀 有点空，甚至会觉得什么都没做是不是浪费了一晚。", s:2, tag:"闲下来容易有负罪感"}
+    ]
+  },
+  {
+    scene:"AI 给出更好的版本",
+    q:"AI 又生成了一个看起来更漂亮的版本，但你现在这个其实已经够用了。你会？",
+    choices:[
+      {t:"✅ 不换了，够用就提交，继续改的收益不大。", s:-1.5, tag:"能主动停止优化"},
+      {t:"🧪 既然可能更好，就再比较一下、再改一点，也许还能更高分。", s:1.5, tag:"容易陷入持续优化"}
+    ]
+  },
+  {
+    scene:"朋友突然约你",
+    q:"你已经完成今天最重要的任务，朋友临时约你出去。你的脑内反应更像？",
+    choices:[
+      {t:"🎉 去啊，今天正好提前完成了。", s:-2, tag:"完成后会兑现生活"},
+      {t:"🗂️ 先想想还有没有什么能趁今天状态好继续推进的。", s:1.5, tag:"任务具有延续性"}
+    ]
+  },
+  {
+    scene:"回看这一周",
+    q:"如果 AI 让你这一周的很多小任务都变快了，你希望最终看到什么？",
+    choices:[
+      {t:"🌴 多出几段真正属于自己的空白时间。", s:-2, tag:"追求自由时间"},
+      {t:"📈 在同样一周里完成比以前更多、更好的东西。", s:2, tag:"追求更高吞吐量"}
+    ]
+  }
+];
+
+let index = 0;
+let score = 0;
+let pickedTags = [];
+let answers = [];
+
+const start = document.getElementById("start");
+const quiz = document.getElementById("quiz");
+const result = document.getElementById("result");
+const qEl = document.getElementById("question");
+const choicesEl = document.getElementById("choices");
+const counter = document.getElementById("counter");
+const scene = document.getElementById("scene");
+const progressFill = document.getElementById("progressFill");
+
+function showScreen(el){
+  [start,quiz,result].forEach(x=>x.classList.remove("active"));
+  el.classList.add("active");
+}
+function renderQuestion(){
+  const item = questions[index];
+  counter.textContent = `${index+1} / ${questions.length}`;
+  progressFill.style.width = `${(index/questions.length)*100}%`;
+  scene.textContent = `SCENE ${String(index+1).padStart(2,"0")} · ${item.scene}`;
+  qEl.textContent = item.q;
+  choicesEl.innerHTML = "";
+  item.choices.forEach((c,choiceIndex)=>{
+    const b = document.createElement("button");
+    b.className = "choice";
+    b.type = "button";
+    b.innerHTML = `<span>${c.t}</span>`;
+    b.onclick = () => choose(c, b, choiceIndex);
+    choicesEl.appendChild(b);
+  });
+}
+function choose(choice, button, choiceIndex){
+  [...choicesEl.children].forEach(x=>x.disabled=true);
+  button.classList.add("selected");
+  score += choice.s;
+  pickedTags.push(choice.tag);
+  answers.push({question:index+1, choice:choiceIndex, score:choice.s});
+  setTimeout(()=>{
+    index++;
+    if(index < questions.length) renderQuestion();
+    else finish();
+  }, 240);
+}
+function finish(){
+  progressFill.style.width = "100%";
+  // Theoretical range is -24 to +24. Map to 0–100 B.
+  let b = Math.round(50 + (score/48)*100);
+  b = Math.max(0, Math.min(100, b));
+  const a = 100-b;
+
+  let title, sub, text, quote;
+  if(b <= 25){
+    title = "快乐回流型 🎮";
+    sub = "AI 对你来说，最理想的意义就是：做快一点，然后把时间还给生活。";
+    text = "你比较擅长在“任务结束”和“自己的时间”之间划线。效率提升后，你更愿意停止继续优化，把省下来的时间真正转化成休息、娱乐、社交或兴趣。";
+    quote = "你的关键词：效率不是为了塞更多事，而是为了更早下班。";
+  } else if(b < 45){
+    title = "偏娱乐回流型 🌴";
+    sub = "你会认真完成任务，但不太愿意让每一块空出来的时间重新变成工作。";
+    text = "你仍然会利用 AI 提升成果质量，但总体上能够保留一部分效率收益给自己。你的状态更像“该做的做好，省下来的时间不必全部再投资”。";
+    quote = "你的关键词：有余力，不代表一定要把余力用光。";
+  } else if(b <= 55){
+    title = "自由切换型 ⚖️";
+    sub = "你没有固定站在娱乐或任务一边，更多取决于当下的任务密度和心情。";
+    text = "有时你会把 AI 省下的时间拿去放松，有时也会趁状态好继续推进。你的时间分配更像动态平衡，而不是单一倾向。";
+    quote = "你的关键词：今天想卷就卷，想躺也能躺。";
+  } else if(b < 75){
+    title = "任务扩张型 📚";
+    sub = "AI 让你做得更快，但空出来的位置通常不会空太久。";
+    text = "你很容易把效率收益重新投入到精修、提前完成、额外项目或下一项任务里。结果是单项任务确实更快了，但一整天的任务感并没有同比下降。";
+    quote = "你的关键词：效率提高以后，待办列表也获得了扩容。";
+  } else {
+    title = "任务永动机型 ⚙️";
+    sub = "你把 AI 变成了任务吞吐量加速器，而不是休息时间制造机。";
+    text = "只要还有一点余力，你就很容易继续优化、提前推进或接下更多事情。对你来说，“提前完成”常常意味着“现在可以开始下一件了”。";
+    quote = "你的关键词：不是 AI 替你省时间，而是你用 AI 生产了更多任务。";
+  }
+
+  const counts = {};
+  pickedTags.forEach(t=>counts[t]=(counts[t]||0)+1);
+  const topTags = Object.entries(counts).sort((x,y)=>y[1]-x[1]).slice(0,3).map(x=>x[0]);
+
+  document.getElementById("resultTitle").textContent = title;
+  document.getElementById("resultSub").textContent = sub;
+  document.getElementById("aNum").textContent = `A 娱乐回流 ${a}%`;
+  document.getElementById("bNum").textContent = `B 任务增殖 ${b}%`;
+  document.getElementById("resultFill").style.width = `${a}%`;
+  document.getElementById("analysisText").textContent = text;
+  document.getElementById("quote").textContent = quote;
+  document.getElementById("tags").innerHTML = topTags.map(t=>`<span class="tag"># ${t}</span>`).join("");
+  window.__resultText = `我的 AI×时间类型：${title}
+A 娱乐回流 ${a}%｜B 任务增殖 ${b}%
+${sub}
+${quote}`;
+  showScreen(result);
+}
+document.getElementById("startBtn").onclick = ()=>{
+  index=0;score=0;pickedTags=[];answers=[];
+  renderQuestion();
+  showScreen(quiz);
+};
+document.getElementById("restartBtn").onclick = ()=>{
+  index=0;score=0;pickedTags=[];answers=[];
+  renderQuestion();
+  showScreen(quiz);
+};
+document.getElementById("copyBtn").onclick = async ()=>{
+  const btn = document.getElementById("copyBtn");
+  try{
+    await navigator.clipboard.writeText(window.__resultText || "");
+    const old=btn.textContent;btn.textContent="已复制 ✓";setTimeout(()=>btn.textContent=old,1200);
+  }catch(e){
+    alert(window.__resultText || "");
+  }
+};
+</script>
+</body>
+</html>
